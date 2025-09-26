@@ -18,7 +18,17 @@ const path = require("path")
 const os = require('os');
 const speed = require('performance-now')
 const { spawn, exec, execSync } = require('child_process');
-const { default: baileys, getContentType } = require("@vynnox/lyvineemine");
+const { fquoted } = require('./fquoted');
+const {
+  default: baileys,
+  proto,
+  getContentType,
+  jidNormalizedUser,
+  generateWAMessageFromContent,
+  generateWAMessageContent,
+  generateWAMessage,
+  prepareWAMessageMedia,
+} = require('@vynnox/lyvineemine');
 module.exports = vynnoxbeyours = async (vynnoxbeyours, m, chatUpdate, store) => {
     try {
         const body = (
@@ -90,6 +100,30 @@ module.exports = vynnoxbeyours = async (vynnoxbeyours, m, chatUpdate, store) => 
             const p = participants.find(p => p.jid === m.sender);
             return p?.lid || null;
         })();
+
+        const time = moment().tz('Asia/Jakarta').format('HH:mm:ss');
+        const datetime = moment()
+          .tz('Asia/Jakarta')
+          .format('dddd, MMMM D YYYY, h:mm:ss a');
+        const jam = moment(Date.now())
+          .tz('Asia/Jakarta')
+          .locale('id')
+          .format('HH:mm:ss z');
+        const penghitung = moment()
+          .tz('Asia/Jakarta')
+          .format('dddd, D MMMM - YYYY');
+        let ucapanWaktu;
+        if (time >= '19:00:00' && time < '23:59:00') {
+          ucapanWaktu = 'Good night! The stars are watching over you';
+        } else if (time >= '15:00:00' && time < '19:00:00') {
+          ucapanWaktu = 'Good afternoon! Have a wonderful evening';
+        } else if (time >= '11:00:00' && time < '15:00:00') {
+          ucapanWaktu = 'Hello! Let\'s have a great day today';
+        } else if (time >= '06:00:00' && time < '11:00:00') {
+          ucapanWaktu = 'Good morning! Let\'s do our best today';
+        } else {
+          ucapanWaktu = 'Enjoy the night! Enjoy the quiet of the night';
+        }
         
         if (isBot) {
             console.log('\x1b[30m--------------------\x1b[0m');
@@ -116,21 +150,24 @@ module.exports = vynnoxbeyours = async (vynnoxbeyours, m, chatUpdate, store) => 
             console.log();
          }
 
-        async function nevreply(text) {
-            vynnoxbeyours.sendMessage(m.chat, {
-                text: text,
-                contextInfo: {
-                    mentionedJid: [sender],
-                    externalAdReply: {
-                        title: "¿? Cannie",
-                        body: "This script was created by VynnoxRzy",
-                        thumbnailUrl: "https://github.com/mp.png",
-                        sourceUrl: 'https://api-cannie.xevenxyyvip.site',
-                        renderLargerThumbnail: false,
-                    }
-                }
-            }, { quoted: m })
-        }
+        async function reply(text) {
+  await vynnoxbeyours.sendMessage(m.chat, {
+    eventMessage: {
+      isCanceled: false,
+      name: `${text} ${jam}`,
+      description: `${ucapanWaktu}`,
+      location: {
+        degreesLatitude: 0,
+        degreesLongitude: 0,
+        name: `${jam}`
+      },
+      joinLink: "https://call.whatsapp.com/video/swèzestyèst1963",
+      startTime: "1763019000",
+      endTime: "1763026200",
+      extraGuestsAllowed: false
+    }
+  }, { quoted: fquoted.packSticker });
+}
 
 const pluginsLoader = async (directory) => {
     let plugins = [];
@@ -196,34 +233,184 @@ for (let plugin of plugins) {
 if (!pluginsDisable) return;
         
         switch (command) {
-            case 'menu': {
-                let botInfo = `Hello Worlds`
-                vynnoxbeyours.sendMessage(m.chat, {
-                    image: { url: "https://files.catbox.moe/e94nfk.jpg" },
-                    caption: botInfo,
-                    contextInfo: {
-                        mentionedJid: [m.sender],
-                        forwardedNewsletterMessageInfo: {
-                            newsletterName: "🕸⃟𝐍𝐞͢𝐯𝐚𝐫𝐢𝐚𝐇͢𝐮͠𝐧͢𝐭𝐞𝐫𝐗᷍𝐱𝐱͢͡",
-                            newsletterJid: `idchlu@newsletter`
+            case 'menu':
+{
+  await vynnoxbeyours.sendMessage(m.chat, {
+    interactiveMessage: {
+      title: `
+╭ ー、〔 𝐔𝐬𝐞𝐫 - 🫧 〕
+│⚘ ᴜsᴇʀ : ${pushname}
+╰──────────`,
+      footer: `@vynnox/lyvineemine ˗ˋˏ63ˎˊ˗⁩ | ${time}`,
+      thumbnail: "https://files.catbox.moe/frdbht.jpg",
+      nativeFlowMessage: {
+        messageParamsJson: JSON.stringify({
+          limited_time_offer: {
+            text: 'l lízanámi, since 1963',
+            url: 't.me/lizanamii',
+            copy_code: 'l lízanámi, since 1963',
+            expiration_time: Date.now() * 99999,
+          },
+          bottom_sheet: {
+            in_thread_buttons_limit: 2,
+            divider_indices: [1, 2, 3, 4, 5, 999],
+            list_title: 'l lízanámi',
+            button_title: 'l lízanámi',
+          },
+          tap_target_configuration: {
+            title: 'l lízanámi',
+            description: 'bomboclard',
+            canonical_url: 'https://shop.example.com/angebot',
+            domain: 'shop.example.com',
+            button_index: 0,
+          },
+        }),
+        buttons: [
+          {
+            name: 'single_select',
+            buttonParamsJson: JSON.stringify({
+              has_multiple_buttons: true,
+            }),
+          },
+          {
+            name: 'call_permission_request',
+            buttonParamsJson: JSON.stringify({
+              has_multiple_buttons: true,
+            }),
+          },
+          {
+            name: 'single_select',
+            buttonParamsJson: JSON.stringify({
+              title: 'l lízanámi',
+              sections: [
+                {
+                  title: 'l lízanámi',
+                  highlight_label: 'label',
+                  rows: [
+                    {
+                      title: '@tqto',
+                      description: `Support ${time}`,
+                      id: '.tqto',
+                    },
+                    {
+                      title: '@cmt',
+                      description: `Create Mt Ban ${time}`,
+                      id: '.cmt',
+                    },
+                    {
+                      title: '@donasi',
+                      description: `Donate ${time}`,
+                      id: '.donasi',
+                    },
+                  ],
+                },
+              ],
+              has_multiple_buttons: true,
+            }),
+          },
+          {
+            name: 'galaxy_message',
+            buttonParamsJson: JSON.stringify({
+              flow_message_version: '3',
+              flow_token: 'unused',
+              flow_id: '1775342589999842',
+              flow_cta: 'l lízanámi',
+              flow_action: {
+                navigate: true,
+                screen: 'AWARD_CLAIM',
+                data: {
+                  error_types: [
+                    { id: '1', title: 'No llega' },
+                    { id: '2', title: 'Diferente' },
+                    { id: '3', title: 'Calidad' },
+                  ],
+                  campaigns: [
+                    { id: 'campaign_1', title: 'Campaña 1' },
+                    { id: 'campaign_2', title: 'Campaña 2' },
+                    { id: 'campaign_3', title: 'Campaña 3' },
+                  ],
+                  categories: [
+                    { id: 'category_1', title: 'Unicam' },
+                    { id: 'category_2', title: 'Constantes' },
+                    {
+                      id: 'category_3',
+                      title: 'Referidos',
+                      'on-unselect-action': {
+                        name: 'update_data',
+                        payload: { subcategory_visibility: false },
+                      },
+                      'on-select-action': {
+                        name: 'update_data',
+                        payload: {
+                          subcategories: [
+                            { id: '1', title: '1 subcategory' },
+                            { id: '2', title: '2 subcategory' },
+                          ],
+                          subcategory_visibility: true,
                         },
-                        isForwarded: true,
-                        externalAdReply: {
-                            showAdAttribution: false,
-                            renderLargerThumbnail: false,
-                            gifPlayback: true,
-                            gifAttribution: 1,
-                            title: `🕸⃟𝐍𝐞͢𝐯𝐚𝐫𝐢𝐚𝐇͢𝐮͠𝐧͢𝐭𝐞𝐫𝐗᷍𝐱𝐱͢͡`,
-                            body: `A simple WhatsApp bot uses JavaScript to respond to commands automatically.`,
-                            mediaType: 1,
-                            thumbnailUrl: `https://files.catbox.moe/e94nfk.jpg`,
-                            thumbnail: ``,
-                            sourceUrl: `serahlu`
-                        }
-                    }
-                }, { quoted: m });
-                break;
-            }
+                      },
+                    },
+                  ],
+                  subcategory_visibility: false,
+                },
+              },
+              flow_metadata: {
+                flow_json_version: 1000,
+                data_api_protocol: 'Believe in yourself, anything is possible.',
+                data_api_version: 9999999,
+                flow_name: '𝟖𝟘𝟖 𝐍𝐞𝐜 🪽',
+                categories: [],
+              },
+              icon: 'REVIEW',
+              has_multiple_buttons: true,
+            }),
+          },
+          {
+            name: 'cta_copy',
+            buttonParamsJson: JSON.stringify({
+              display_text: 'l lízanámi',
+              id: '123456789',
+              copy_code: "@lizanamii/lizbailyesx",
+            }),
+          },
+          {
+            name: 'galaxy_message',
+            buttonParamsJson: JSON.stringify({
+              icon: 'REVIEW',
+              flow_cta: '夜明け',
+              flow_message_version: '3',
+            }),
+          },
+          {
+            name: 'galaxy_message',
+            buttonParamsJson: JSON.stringify({
+              icon: 'PROMOTION',
+              flow_cta: 'レクシー',
+              flow_message_version: '3',
+            }),
+          },
+          {
+            name: 'galaxy_message',
+            buttonParamsJson: JSON.stringify({
+              icon: 'DOCUMENT',
+              flow_cta: '< リザナミ幹部? ',
+              flow_message_version: '3',
+            }),
+          },
+          {
+            name: 'galaxy_message',
+            buttonParamsJson: JSON.stringify({
+              icon: 'DEFAULT',
+              flow_cta: 'リザナミ',
+              flow_message_version: '3',
+            })
+          }
+        ]
+      }
+    }
+  }, { quoted: fquoted.packSticker });
+}
+break;
 
             case 'buttonold': {
                 let teks = `> ようこそ`;
